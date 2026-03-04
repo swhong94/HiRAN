@@ -20,7 +20,7 @@ class AssociationManager:
         score = rsrp_db + bias_db[None, :] 
         # Mask OFF BS with -inf 
         mask = (bs_on[None, :] > 0.5) 
-        score = np.where(mask, score, 1e-30) 
+        score = np.where(mask, score, -np.inf) 
 
         # If all BS are off, fall back to strongest RSRP without mask (safety) 
         if not np.any(bs_on > 0.5): 

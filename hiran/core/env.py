@@ -41,7 +41,9 @@ class TwoTimeScaleEnv:
         self.queues = BitQueues(num_ue=cfg.num_ue, 
                                 init_bits=cfg.queue_init_bits)
         self.channel = SimpleChannel(pathloss_exp=cfg.pathloss_exp, 
-                                     shadowing_std_db=cfg.shadowing_std_db)
+                                     shadowing_std_db=cfg.shadowing_std_db, 
+                                     enable_shadowing=cfg.enable_shadowing, 
+                                     rng=self.rng)
         self.assoc_mng = AssociationManager() 
         self.scheduler = DPPSchedulerGreedy(V=cfg.V) 
         self.energy = SimpleEnergyModel(p_on_w=cfg.p_on_w, 
@@ -118,7 +120,7 @@ class TwoTimeScaleEnv:
         # Recompute association for this time window 
         self.assoc = self.assoc_mng.associate(rsrp_db=self.rsrp_db, 
                                               bias_db=self.bias_db, 
-                                              bs_on=self.bias_db)
+                                              bs_on=self.bs_on)
         
         # Run fast loop for window W 
         self.agg.reset() 
@@ -146,7 +148,7 @@ class TwoTimeScaleEnv:
             "avg_q_mean": float(np.mean(kpis.avg_q_ue))
         }
 
-        return StepResult(obs=obs, reward=reward, info=info)
+        return StepResult(obs=obs, reward=reward, done=done, info=info)
     
     # ----------------- INTERNALS -------------------- 
     def _step_slot_internal(self, ) -> None: 
@@ -196,7 +198,7 @@ class TwoTimeScaleEnv:
             energy_w = 0.0 
             switch = 0.0 
         else: 
-            avg_thr = kpis.avg_thr 
+            avg_thr = kpis.avg_thr_ue
             avg_q = kpis.avg_q_ue 
             util = kpis.util_bs 
             energy_w = kpis.energy_window 
@@ -214,7 +216,7 @@ class TwoTimeScaleEnv:
             "avg_thr_ue": avg_thr.astype(np.float64),
             "avg_q_ue": avg_q.astype(np.float64), 
             "energy_window": np.array([energy_w], dtype=np.float64), 
-            "switch_count": np.array([switch], dtype=np.floatt64),
+            "switch_count": np.array([switch], dtype=np.float64),
             "action_mask_bs_on": mask_bs_on, 
         }
         return obs 

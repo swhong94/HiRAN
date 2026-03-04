@@ -14,7 +14,7 @@ class Topology:
     def random(num_bs: int, num_ue: int, area_size_m: float, rng: np.random.Generator) -> "Topology": 
         bs_xy = rng.uniform(0.0, area_size_m, size=(num_bs, 2))
         ue_xy = rng.uniform(0.0, area_size_m, size=(num_ue, 2))
-        return Topology(bs_xy=bs_xy, ue_x=ue_xy)
+        return Topology(bs_xy=bs_xy, ue_xy=ue_xy)
     
     def distances(self) -> np.ndarray: 
         # (U, B) 
