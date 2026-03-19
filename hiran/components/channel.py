@@ -1,11 +1,13 @@
+# hiran/components/channel.py
+
 from __future__ import annotations
 import numpy as np 
 
 class SimpleChannel: 
-    """
-    Large-scale pathloss + optional shadowing 
-    Produces per-link gain g_{u, b} (linear) and rsrp_db for association
-    """
+    """Large-scale pathloss + optional shadowing 
+    
+    Produces per-link gain g_{u, b} (linear) and RSRP in dB for association 
+    SNR-only (no inter-cell interference) - assumptions A1 + A2 """
     def __init__(self, 
                  pathloss_exp: float, 
                  shadowing_std_db: float, 
